@@ -3,13 +3,42 @@ import 'package:provider/provider.dart';
 import 'package:yonomi_flutter_app/models/device.dart';
 
 class DeviceListModel {
-  List<DeviceModel> myDevices = [];
-  DeviceListModel(this.myDevices);
-  void updateDeviceList() {
-    for (final device in myDevices) {
-      device.getDeviceStatus(device.deviceId);
+  static final List<String> deviceIDs = [];
+
+  List<Device> get myDevices => {
+    List<Device> myDevices = <Device>[];
+    for (var l = 1, l<deviceIDs.length; l++) {
+      Device newDevice = Device();
+      newDevice.getDeviceById(id);
+      myDevices.add(newDevice);
     }
+    return myDevices;
   }
+
+
+  
 }
 
-//Should this be a list of DeviceModel or just a list of strings of ids, or a list of key:value pairs of id & name?  Should device status be included in this model? Maybe there should be 3 models: DeviceList, Device, and DeviceFunctions or DeviceDetail.  Both DeviceList and DeviceFunctions would be dependent on Device. This probably makes sense b/c it seems like it will lead to the fewest queries.  
+class Device with ChangeNotifier {
+  String deviceId = '';
+  String? deviceName;
+  String? lockedState;
+  String? jammedState;
+  int? batteryLevel;
+
+  Device getDeviceById(String id) {
+    //Yonomi query here
+    String name = "name from query";
+    String locked = "state from query";
+    String jammed = "state from query";
+    int battery = 100; 
+    Device newDevice = Device();
+    newDevice.deviceId = id;
+    newDevice.deviceName = name;
+    newDevice.lockedState = locked;
+    newDevice.jammedState = jammed;
+    newDevice.batteryLevel = battery;
+    return newDevice;
+  } 
+}
+
