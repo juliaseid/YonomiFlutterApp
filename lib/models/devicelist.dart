@@ -1,23 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:yonomi_device_widgets/providers/device_provider.dart';
+import 'package:yonomi_flutter_app/models/request.dart';
 import 'package:yonomi_flutter_app/models/device.dart';
-
-class DeviceListModel {
-  static final List<String> deviceIDs = [];
-
-  List<Device> get myDevices => {
-    List<Device> myDevices = <Device>[];
-    for (var l = 1, l<deviceIDs.length; l++) {
-      Device newDevice = Device();
-      newDevice.getDeviceById(id);
-      myDevices.add(newDevice);
-    }
-    return myDevices;
-  }
-
-
-  
-}
+import 'package:yonomi_platform_sdk/yonomi-sdk.dart';
 
 class Device with ChangeNotifier {
   String deviceId = '';
@@ -25,20 +11,39 @@ class Device with ChangeNotifier {
   String? lockedState;
   String? jammedState;
   int? batteryLevel;
+  // late Function setLocked;
+  // late Function setUnlocked;
 
-  Device getDeviceById(String id) {
-    //Yonomi query here
-    String name = "name from query";
-    String locked = "state from query";
-    String jammed = "state from query";
-    int battery = 100; 
-    Device newDevice = Device();
-    newDevice.deviceId = id;
-    newDevice.deviceName = name;
-    newDevice.lockedState = locked;
-    newDevice.jammedState = jammed;
-    newDevice.batteryLevel = battery;
-    return newDevice;
-  } 
+  Device(String deviceId) {
+    DevicesRepository.getDeviceDetails(request, deviceId);
+
+  }
+  // Future <Device> getDeviceById(String id) async {
+  //   var newDevice = await DevicesRepository.getDeviceDetails(request, id);
+  //   return newDevice;
+  // } 
 }
+
+
+class DeviceListModel {
+  final List<String> deviceIDs = [];
+  
+  set myDevices (List<String> deviceIDs) =>  {
+    deviceIDs.forEach((element) {
+      Future<Device> newDevice = Device.getDeviceById(id)
+    })
+  };
+
+  List<Device> get myDevices => {
+    myDevices = <Device>[];
+    return myDevices;
+  }
+
+//   static List<Device> 
+
+
+  
+// }
+
+
 
