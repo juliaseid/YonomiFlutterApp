@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 import 'package:window_size/window_size.dart';
 //Set window size for builds identified by dart:io and kIsWeb criteria
 import 'package:yonomi_platform_sdk/yonomi-sdk.dart';
-import 'package:yonomi_flutter_app/models/device.dart';
 import 'package:yonomi_flutter_app/models/devicelist.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -43,12 +42,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(providers: [
-      ChangeNotifierProvider<DeviceModel>(
-        create: (context) => DeviceModel(),
+      ChangeNotifierProvider<Lock>(
+        create: (context) => Lock(),
       ),
-      ProxyProvider<DeviceModel, DeviceListModel>(
-        update: (context, myDeviceModel, myDeviceListModel) =>
-            DeviceListModel(myDeviceModel),
+      ProxyProvider<Lock, DeviceList>(
+        update: (context, myLock, myDeviceList) => DeviceList(myLock),
       )
     ]);
   }
