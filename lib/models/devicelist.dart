@@ -8,30 +8,24 @@ import 'package:yonomi_flutter_app/models/device.dart';
 import 'package:yonomi_platform_sdk/yonomi-sdk.dart';
 
 class DeviceList {
-  DeviceList._create() {
-    
+  // TODO: set up constructor
+  DeviceList._create(String jsonData) {
+    //TODO: parse json
   }
-  //this should follow the private constructor/public factory model
+
+  static Future<DeviceList> create() async {
+    String jsonData = DevicesRepository.getDevices(request).toString();
+    var deviceList = DeviceList._create(jsonData);
+    return deviceList;
+  }
 }
 
-static Future<DeviceList> create() async {
-  await DevicesRepository.getDevices(request);
-  var deviceList = DeviceList._create();
-  
-  return deviceList;
-}
-
-// final device = deviceFromJson(jsonstring);
 class Device {
   String? deviceId;
   String? deviceName;
   String? deviceType;
 
-  Device({
-    this.deviceId,
-    this.deviceName,
-    this.deviceType
-  });
+  Device({this.deviceId, this.deviceName, this.deviceType});
 
   factory Device.fromRawJson(String str) => Device.fromJson(json.decode(str));
 
@@ -40,38 +34,39 @@ class Device {
     String trait = json['traits'][0];
     if (trait == 'THERMOSTAT_SETTING') {
       type = "thermostat";
-    }
-    else if (trait == 'LOCK') {
+    } else if (trait == 'LOCK') {
       type = "lock";
-    }
-    else if (trait == "BRIGHTNESS") {
+    } else if (trait == "BRIGHTNESS") {
       type = "light";
     }
     return Device(
-    deviceId: json['id'],
-    deviceName: json['displayName'],
-    deviceType: type,
+      deviceId: json['id'],
+      deviceName: json['displayName'],
+      deviceType: type,
     );
-  } 
+  }
 }
 
-
-
-class Lock extends Device with ChangeNotifier {
+class Lock with ChangeNotifier {
+  String? lockId;
+  String? lockName;
   String? lockedState;
   String? jammedState;
   int? batteryLevel;
-  // late Function setLocked;
-  // late Function setUnlocked;
 
-  // Lock(String deviceId) {
-  //   DevicesRepository.getDeviceDetails(request, deviceId);
-
-    //Lock should also be private constructor, public factory
+  Lock._create(String jsonData) {
+    //TODO: parse JSON data & assign
+    this.lockId;
+    this.lockName;
+    this.lockedState;
+    this.jammedState;
+    this.batteryLevel;
   }
-  // Future <Device> getDeviceById(String id) async {
-  //   var newDevice = await DevicesRepository.getDeviceDetails(request, id);
-  //   return newDevice;
-  // }
+
+  static Future<Lock> create(String lockId) async {
+    String jsonData =
+        DevicesRepository.getLockDetails(request, lockId).toString();
+    var lockDetails = Lock._create(jsonData);
+    return lockDetails;
+  }
 }
- 
