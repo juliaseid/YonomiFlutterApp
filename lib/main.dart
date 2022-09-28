@@ -41,14 +41,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(providers: [
-      ChangeNotifierProvider<Lock>(
-        create: (context) => Lock(),
+    return MaterialApp(
+      title: 'My Yonomi Device App',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
-      ProxyProvider<Lock, DeviceList>(
-        update: (context, myLock, myDeviceList) => DeviceList(myLock),
-      )
-    ]);
+      home: const MyHomePage(),
+    );
   }
 }
 
@@ -57,35 +56,43 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Flutter Demo Home Page'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('You have pushed the button this many times:'),
-            // Consumer looks for an ancestor Provider widget
-            // and retrieves its model (Counter, in this case).
-            // Then it uses that model to build widgets, and will trigger
-            // rebuilds if the model is updated.
-            Consumer<Counter>(
-              builder: (context, counter, child) => Text(
-                '${counter.value}',
-                style: Theme.of(context).textTheme.headlineMedium,
+    return FutureProvider<MyModel>(
+      //                      <--- FutureProvider
+      initialData: MyModel(someValue: 'default value'),
+      create: (context) => someAsyncFunctionToGetMyModel(),
+      child: MaterialApp(
+        home: Scaffold(
+          appBar: AppBar(title: Text('My App')),
+          body: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                  padding: const EdgeInsets.all(20),
+                  color: Colors.green[200],
+                  child: Consumer<MyModel>(
+                    //                    <--- Consumer
+                    builder: (context, myModel, child) {
+                      return RaisedButton(
+                        child: Text('Do something'),
+                        onPressed: () {
+                          myModel.doSomething();
+                        },
+                      );
+                    },
+                  )),
+              Container(
+                padding: const EdgeInsets.all(35),
+                color: Colors.blue[200],
+                child: Consumer<MyModel>(
+                  //                    <--- Consumer
+                  builder: (context, myModel, child) {
+                    return Text(myModel.someValue);
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          var counter = context.read<Counter>();
-          counter.increment();
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }

@@ -46,11 +46,17 @@ class Lock with ChangeNotifier {
         .value;
   }
 
-  static Future<Lock> create(String lockId) async {
-    Device lockDevice = await DevicesRepository.getLockDetails(request, lockId);
-    var lock = Lock._create(lockDevice);
-    return lock;
+  // static Future<Lock> create(String lockId) async {
+  //   Device lockDevice = await DevicesRepository.getLockDetails(request, lockId);
+  //   var lock = Lock._create(lockDevice);
+  //   return lock;
+  // }
+
+  static Lock create(String lockId) async {
+    var newLock = Lock()
+    //TODO: create an empty lock for initial state, then call Yonomi
   }
+
 }
 
 // class Device {
