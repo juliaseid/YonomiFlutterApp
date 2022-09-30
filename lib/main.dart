@@ -6,9 +6,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:window_size/window_size.dart';
+import 'package:yonomi_flutter_app/common/theme.dart';
 //Set window size for builds identified by dart:io and kIsWeb criteria
 import 'package:yonomi_platform_sdk/yonomi-sdk.dart';
 import 'package:yonomi_flutter_app/models/devicelist.dart';
+import 'package:yonomi_flutter_app/models/device.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future main() async {
@@ -41,59 +43,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'My Yonomi Device App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(),
-    );
+    return Provider<DeviceList>(
+        create: (context) => DeviceList.create(),
+        child: MaterialApp(
+          title: 'Yonomi Device Demo App', 
+          theme: appTheme,
+          initialRoute: '/',
+          routes: {
+            '/': ((context) => const MyDeviceList(),
+            '/deviceDetail': (context) => const MyDeviceDetail(),
+          }
+        )
+      );
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureProvider<MyModel>(
-      //                      <--- FutureProvider
-      initialData: MyModel(someValue: 'default value'),
-      create: (context) => someAsyncFunctionToGetMyModel(),
-      child: MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(title: Text('My App')),
-          body: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                  padding: const EdgeInsets.all(20),
-                  color: Colors.green[200],
-                  child: Consumer<MyModel>(
-                    //                    <--- Consumer
-                    builder: (context, myModel, child) {
-                      return RaisedButton(
-                        child: Text('Do something'),
-                        onPressed: () {
-                          myModel.doSomething();
-                        },
-                      );
-                    },
-                  )),
-              Container(
-                padding: const EdgeInsets.all(35),
-                color: Colors.blue[200],
-                child: Consumer<MyModel>(
-                  //                    <--- Consumer
-                  builder: (context, myModel, child) {
-                    return Text(myModel.someValue);
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
