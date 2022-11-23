@@ -1,5 +1,4 @@
 import 'package:yonomi_platform_sdk/yonomi-sdk.dart';
-import 'package:yonomi_flutter_app/request.dart';
 import 'package:yonomi_device_widgets/providers/widget_state.dart';
 import 'package:yonomi_device_widgets/ui/string_constants.dart';
 
