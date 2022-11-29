@@ -1,9 +1,11 @@
 import 'package:yonomi_platform_sdk/yonomi-sdk.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:dotenv/dotenv.dart';
 
-const String endpoint = 'platform.yonomi.cloud/graphql';
-final String token = dotenv.get('TOKEN_STRING');
-final String tenantId = dotenv.get('TENANT_ID');
+var env = DotEnv(includePlatformEnvironment: true)..load();
+
+const String endpoint = 'https://platform.yonomi.cloud/graphql';
+final String token = '${env['TOKEN_STRING']}';
+final String tenantId = '${env['TENANT_ID']}';
 
 Request request = Request(endpoint, {
   "Authorization": "Bearer $token",

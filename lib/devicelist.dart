@@ -1,8 +1,13 @@
 import 'package:yonomi_platform_sdk/yonomi-sdk.dart';
 import 'package:yonomi_device_widgets/providers/widget_state.dart';
 import 'package:yonomi_device_widgets/ui/string_constants.dart';
+import 'package:http/http.dart' as http;
+import 'package:dotenv/dotenv.dart';
+import 'package:yonomi_flutter_app/querytext.dart' as queryText;
+
 
 typedef GetDeviceListMethod = Future<List<Device>> Function(Request request);
+var env = DotEnv(includePlatformEnvironment: true)..load();
 
 class DeviceList {
   late Request _request;
@@ -14,7 +19,7 @@ class DeviceList {
 
   DeviceList(Request request,
       {GetDeviceListMethod getDeviceList = DevicesRepository.getDevices}) {
-    this._request = request;
+    _request = request;
     fetchData(getDeviceList: getDeviceList);
   }
 
@@ -25,22 +30,51 @@ class DeviceList {
 
     try {
       _deviceList = await getDeviceList(_request);
+      final userFromRequest = await UserRepository.getUserDetails(_request);
+      print("My User ID: ${userFromRequest.id}");
+      print(
+          "Date of my user's first activity: ${userFromRequest.firstActivityAt}");
+      print(
+          "Date of my user's last activity: ${userFromRequest.lastActivityAt}");
       setState = WidgetState.idle;
     } catch (error) {
+      print(error.toString());
       setErrorState(error.toString());
     }
   }
 
-  List<Device>? get myDevices => _deviceList;
+  // List<Device>? get myDevices => _deviceList;
+
+  final String token = '${env['TOKEN_STRING']}';
+  final String tenantId = '${env['TENANT_ID']}';
+  
+  Future<http.Response> fetchDevices() {
+    return http.post(Uri.parse('https://platform.yonomi.cloud/graphql'), headers: {
+        "Authorization": "Bearer $token",
+        "x-allegion-installation-reference-id": tenantId
+    },
+    body: queryText.allDevicesquery);
+  }
+
+  factory DeviceList.fromJson(Map<String, dynamic> json) {
+    List<Device> devicesFromJson = [];
+
+    return DeviceList(
+      _deviceList: devicesFromJson;
+    );
+  }
+
+  List<Device>? get myDevices async => await  
+
 
   set setState(WidgetState newState) {
-    if (!this._isDisposed) {
+    if (!_isDisposed) {
       _state = newState;
     }
   }
 
   void dispose() {
-    this._isDisposed = true;
+    _isDisposed = true;
   }
 
   void setErrorState(String errorMsg) {
