@@ -10,12 +10,12 @@ typedef GetDeviceListMethod = Future<List<Device>> Function(Request request);
 var env = DotEnv(includePlatformEnvironment: true)..load();
 
 class DeviceList {
-  final List<Device> myDevices;
+  List<Device>? myDevices;
   final String token = '${env['TOKEN_STRING']}';
   String tenantId = '${env['TENANT_ID']}';
 
   DeviceList({
-    required this.myDevices,
+    this.myDevices,
   });
 
   factory DeviceList.fromJson(Map<String, dynamic> json) {

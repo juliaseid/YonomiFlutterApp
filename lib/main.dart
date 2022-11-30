@@ -12,6 +12,8 @@ import 'package:yonomi_flutter_app/devicelist.dart';
 
 void main() {
   runApp(MyApp());
+  late Future<DeviceList> futureDeviceList;
+  futureDeviceList = fetchDeviceList();
 }
 
 class MyApp extends StatelessWidget {
@@ -19,8 +21,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Device>? myDeviceList = DeviceList(request).myDevices;
-
+    futureDeviceList 
     if (myDeviceList != null) {
       return MaterialApp(
         title: 'Welcome to Yonomi',
@@ -46,7 +47,6 @@ class MyApp extends StatelessWidget {
               body: Column(
                 children: [
                   const Text("You have no Yonomi devices."),
-                  // const ButtonElement()
                 ],
               )));
     }
