@@ -1,54 +1,81 @@
 import 'package:flutter/material.dart';
-import 'package:dotenv/dotenv.dart';
-import 'package:provider/provider.dart';
-import 'package:yonomi_device_widgets/assets/traits/device_item_icon.dart';
-import 'package:yonomi_device_widgets/devices/lock.dart';
-import 'package:yonomi_device_widgets/providers/device_provider.dart';
 import 'package:yonomi_device_widgets/traits/detail_screen.dart';
-import 'package:yonomi_device_widgets/traits/lock_widget.dart';
-import 'package:yonomi_platform_sdk/yonomi-sdk.dart';
 import 'package:yonomi_flutter_app/request.dart';
 import 'package:yonomi_flutter_app/devicelist.dart';
 
-void main() {
-  runApp(MyApp());
-  late Future<DeviceList> futureDeviceList;
-  futureDeviceList = fetchDeviceList();
-}
+void main() => runApp(const MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late Future<DeviceList> futureDeviceList;
+
+  @override
+  void initState() {
+    super.initState();
+    futureDeviceList = DeviceList().fetchDeviceList();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    futureDeviceList 
-    if (myDeviceList != null) {
-      return MaterialApp(
-        title: 'Welcome to Yonomi',
+    return MaterialApp(
+        title: 'Your Yonomi Devices',
+        theme: ThemeData(
+          primaryColor: Colors.yellow[400],
+        ),
         home: Scaffold(
             appBar: AppBar(
-              title: const Text('Your Yonomi Devices'),
+              title: const Text('Welcome to Yonomi'),
             ),
-            body: ListView.builder(
-              itemBuilder: ((BuildContext context, int index) {
-                return ListTile(
-                    leading: DeviceItemIcon.getIcon(myDeviceList[index].traits),
-                    title: Text(myDeviceList[index].displayName));
-              }),
-            )),
-      );
-    } else {
-      return MaterialApp(
-          title: 'Welcome to Yonomi',
-          home: Scaffold(
-              appBar: AppBar(
-                title: const Text('Your Yonomi Devices'),
-              ),
-              body: Column(
-                children: [
-                  const Text("You have no Yonomi devices."),
-                ],
-              )));
-    }
+            body: Center(
+              child: FutureBuilder<DeviceList>(
+                  future: futureDeviceList,
+                  builder: ((context, snapshot) {
+                    if (snapshot.hasData) {
+                      if (snapshot.data!.myDevices != null) {
+                        final Map<String, String> deviceMap =
+                            <String, String>{};
+                        for (var device in snapshot.data!.myDevices!) {
+                          final deviceNameId = <String, String>{
+                            device.id: device.displayName
+                          };
+                          deviceMap.addEntries(deviceNameId.entries);
+                        }
+                        ListView.builder(
+                            itemCount: deviceMap.length,
+                            prototypeItem: ListTile(
+                              title: Text(deviceMap.values.first),
+                            ),
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                title: Text(deviceMap.values.elementAt(index)),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => DetailScreen(
+                                            request: request,
+                                            deviceId: deviceMap.keys
+                                                .elementAt(index)),
+                                      ));
+                                },
+                              );
+                            });
+                      } else if (snapshot.hasData &&
+                          snapshot.data!.myDevices == null) {
+                        return const Text(
+                            'You have no Yonomi devices linked to your account.');
+                      }
+                    } else if (snapshot.hasError) {
+                      return Text('${snapshot.error}');
+                    }
+                    return const CircularProgressIndicator();
+                  })),
+            )));
   }
 }

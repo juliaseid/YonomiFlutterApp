@@ -1,4 +1,5 @@
-const String allDevicesquery = """query
+const Map<String, String> allDevicesquery = {
+  "query": """query
   getMyDevices {
     me {
       devices {
@@ -17,4 +18,5 @@ const String allDevicesquery = """query
       }
     }
   }
-  `""";
+  """
+};
