@@ -18,7 +18,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    futureDeviceList = DeviceList().fetchDeviceList();
+    futureDeviceList = DeviceList.fetchDeviceList();
   }
 
   @override
