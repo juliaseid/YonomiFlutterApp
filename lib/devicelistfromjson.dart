@@ -57,5 +57,5 @@ class DeviceList {
 }
 
 void main() {
-  DevicesRepository.getDevices(request);
+  print(DeviceList().myDevices);
 }

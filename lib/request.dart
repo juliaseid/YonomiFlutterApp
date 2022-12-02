@@ -36,7 +36,6 @@ Future<String> fetchHealthCheck() async {
           body: jsonEncode(healthCheck));
   if (response.statusCode == 200) {
     print(response.body.toString());
-    print(jsonDecode(response.body));
     return (response.body.toString());
   } else {
     print(response.statusCode);
