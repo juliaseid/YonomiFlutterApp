@@ -38,13 +38,71 @@ class _MyAppState extends State<MyApp> {
             body: Center(
                 child: FutureBuilder<List<SDK.Device>>(
                     future: futureDeviceList,
-                    builder: ((context, snapshot) {
+                    builder:
+                        ((context, AsyncSnapshot<List<SDK.Device>> snapshot) {
+                      List<Widget> children;
                       if (snapshot.hasData) {
-                        return Text(snapshot.data!.toString());
+                        List<SDK.Device> devices = snapshot.data!;
+                        children = <Widget>[
+                          const Text("Your Yonomi Devices"),
+                          Padding(
+                              padding: const EdgeInsets.only(top: 16),
+                              child: ListView.builder(
+                                  itemCount: devices.length,
+                                  prototypeItem: ListTile(
+                                    title: Text(devices.first.displayName),
+                                  ),
+                                  itemBuilder: (context, index) {
+                                    return ListTile(
+                                      title: Text(
+                                          devices.elementAt(index).displayName),
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  DetailScreen(
+                                                      request: request,
+                                                      deviceId: devices
+                                                          .elementAt(index)
+                                                          .id),
+                                            ));
+                                      },
+                                    );
+                                  }))
+                        ];
                       } else if (snapshot.hasError) {
-                        return Text('$snapshot.error');
+                        children = <Widget>[
+                          const Icon(
+                            Icons.error_outline,
+                            color: Colors.red,
+                            size: 60,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16),
+                            child: Text('Error: ${snapshot.error}'),
+                          ),
+                        ];
+                      } else {
+                        children = const <Widget>[
+                          SizedBox(
+                            width: 60,
+                            height: 60,
+                            child: CircularProgressIndicator(),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 16),
+                            child: Text('Awaiting result...'),
+                          ),
+                        ];
                       }
-                      return const CircularProgressIndicator();
+
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: children,
+                        ),
+                      );
                     }))
                 // child: FutureBuilder<DeviceList>(
                 //     future: futureDeviceList,
