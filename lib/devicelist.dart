@@ -6,8 +6,12 @@ class DeviceList {
   static Request request = my_request.request;
 
   Future<void> fetchDeviceList() async {
-    var devicesFromGraph = await DevicesRepository.getDevices(request);
-    _myDevices = devicesFromGraph;
+    try {
+      var devicesFromGraph = await DevicesRepository.getDevices(request);
+      _myDevices = devicesFromGraph;
+    } catch (error) {
+      print(error.toString());
+    }
   }
 
   List<Device> get myDevices => _myDevices;
