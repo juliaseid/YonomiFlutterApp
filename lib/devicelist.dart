@@ -1,23 +1,12 @@
 import 'package:yonomi_platform_sdk/yonomi-sdk.dart';
-import 'package:dotenv/dotenv.dart';
-import 'package:yonomi_flutter_app/request.dart';
-import 'dart:convert';
-
-Iterable<String> path = ['.env'];
-var env = DotEnv(includePlatformEnvironment: true)..load(path);
+import 'package:yonomi_flutter_app/request.dart' as my_request;
 
 class DeviceList {
   List<Device> _myDevices = [];
-  final Request request;
-
-  DeviceList(this.request);
+  static Request request = my_request.request;
 
   Future<void> fetchDeviceList() async {
-    final devicesFromGraph = await DevicesRepository.getDevices(request);
-    if (devicesFromGraph == null) {
-      _myDevices = [];
-      return;
-    }
+    var devicesFromGraph = await DevicesRepository.getDevices(request);
     _myDevices = devicesFromGraph;
   }
 
@@ -25,5 +14,6 @@ class DeviceList {
 }
 
 main() async {
-  DeviceList(request).fetchDeviceList();
+  DeviceList().fetchDeviceList();
+  print(DeviceList().myDevices);
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:yonomi_device_widgets/traits/detail_screen.dart';
 import 'package:yonomi_flutter_app/request.dart';
-import 'package:yonomi_flutter_app/devicelist.dart';
+// import 'package:yonomi_flutter_app/devicelist.dart';
+// ignore: library_prefixes
 import 'package:yonomi_platform_sdk/yonomi-sdk.dart' as platform_SDK;
 
 void main() => runApp(const MyApp());
@@ -15,22 +16,17 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late Future<List<platform_SDK.Device>> futureDeviceList;
-  late Future<String> testString;
 
   @override
   void initState() {
     super.initState();
     futureDeviceList = platform_SDK.DevicesRepository.getDevices(request);
-    testString = fetchHealthCheck();
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Your Yonomi Devices',
-        theme: ThemeData(
-          primaryColor: Colors.yellow[400],
-        ),
         home: Scaffold(
             appBar: AppBar(
               title: const Text('Welcome to Yonomi'),
@@ -46,30 +42,32 @@ class _MyAppState extends State<MyApp> {
                         children = <Widget>[
                           const Text("Your Yonomi Devices"),
                           Padding(
-                              padding: const EdgeInsets.only(top: 16),
-                              child: ListView.builder(
-                                  itemCount: devices.length,
-                                  prototypeItem: ListTile(
-                                    title: Text(devices.first.displayName),
-                                  ),
-                                  itemBuilder: (context, index) {
-                                    return ListTile(
-                                      title: Text(
-                                          devices.elementAt(index).displayName),
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  DetailScreen(
-                                                      request: request,
-                                                      deviceId: devices
-                                                          .elementAt(index)
-                                                          .id),
-                                            ));
-                                      },
-                                    );
-                                  }))
+                            padding: const EdgeInsets.only(top: 16),
+                            child: Text(devices.toString()),
+                            // ListView.builder(
+                            //     itemCount: devices.length,
+                            //     prototypeItem: ListTile(
+                            //       title: Text(devices.first.displayName),
+                            //     ),
+                            //     itemBuilder: (context, index) {
+                            //       return ListTile(
+                            //         title: Text(
+                            //             devices.elementAt(index).displayName),
+                            //         onTap: () {
+                            //           Navigator.push(
+                            //               context,
+                            //               MaterialPageRoute(
+                            //                 builder: (context) =>
+                            //                     DetailScreen(
+                            //                         request: request,
+                            //                         deviceId: devices
+                            //                             .elementAt(index)
+                            //                             .id),
+                            //               ));
+                            //         },
+                            //       );
+                            //     })
+                          )
                         ];
                       } else if (snapshot.hasError) {
                         children = <Widget>[
